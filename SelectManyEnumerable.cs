@@ -103,5 +103,11 @@ namespace SelectManyLinq
 
             return count;
         }
+
+        public static IEnumerable<TSource> Concat<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
+        {   
+            var enumerables = new [] { first, second };
+            return enumerables.SelectMany(element => element);
+        }
     }
 }
