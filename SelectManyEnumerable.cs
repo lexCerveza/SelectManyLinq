@@ -109,5 +109,41 @@ namespace SelectManyLinq
             var enumerables = new [] { first, second };
             return enumerables.SelectMany(element => element);
         }
+
+        public static bool Any<TSource>(this IEnumerable<TSource> source)
+        {
+            foreach (var item in source)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            foreach (var item in source)
+            {
+                if (predicate(item)) 
+                {
+                    return true;
+                }
+            }
+
+            return false; 
+        }
+
+        public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            foreach (var item in source) 
+            {
+                if (!predicate(item)) 
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
