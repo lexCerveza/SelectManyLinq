@@ -50,34 +50,58 @@ namespace SelectManyLinq
             return source.SelectMany((elem, index) => SelectManyEnumerable.Repeat(selector(elem, index), 1));
         }
 
-        // stupid implementation but uses SelectMany )))s
         public static int Count<TSource>(this IEnumerable<TSource> source)
         {
             var count = 0;
 
-            var enumerableToIterate = source.SelectMany(elem => 
+            foreach (var item in source)
             {
                 count++;
-                return SelectManyEnumerable.Repeat(elem, 1);
-            });
-            
-            // iterate enumerable because it's lazy
-            foreach (var elem in enumerableToIterate) {}
+            }
 
             return count;
         }
 
-        public static long LongCount<TSource>(
-            this IEnumerable<TSource> source)
+        public static int Count<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            return 0L;
+            var count = 0;
+
+            foreach (var item in source)
+            {
+                if (predicate(item)) 
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
-        public static long LongCount<TSource>(
-            this IEnumerable<TSource> source,
-            Func<TSource, bool> predicate)
+        public static long LongCount<TSource>(this IEnumerable<TSource> source)
         {
-            return 0L;
+            long count = 0;
+
+            foreach (var item in source)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        public static long LongCount<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            long count = 0;
+
+            foreach (var item in source)
+            {
+                if (predicate(item)) 
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 }
