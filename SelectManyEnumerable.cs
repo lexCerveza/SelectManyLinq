@@ -68,7 +68,7 @@ namespace SelectManyLinq
 
             foreach (var item in source)
             {
-                if (predicate(item)) 
+                if (predicate(item))
                 {
                     count++;
                 }
@@ -95,7 +95,7 @@ namespace SelectManyLinq
 
             foreach (var item in source)
             {
-                if (predicate(item)) 
+                if (predicate(item))
                 {
                     count++;
                 }
@@ -105,8 +105,8 @@ namespace SelectManyLinq
         }
 
         public static IEnumerable<TSource> Concat<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
-        {   
-            var enumerables = new [] { first, second };
+        {
+            var enumerables = new[] { first, second };
             return enumerables.SelectMany(element => element);
         }
 
@@ -124,26 +124,45 @@ namespace SelectManyLinq
         {
             foreach (var item in source)
             {
-                if (predicate(item)) 
+                if (predicate(item))
                 {
                     return true;
                 }
             }
 
-            return false; 
+            return false;
         }
 
         public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            foreach (var item in source) 
+            foreach (var item in source)
             {
-                if (!predicate(item)) 
+                if (!predicate(item))
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+        public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
+        {
+            return ExceptImpl(first, second, EqualityComparer<TSource>.Default);
+        }
+        
+        public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        {
+            return ExceptImpl(first, second, comparer);
+        }
+
+        private static IEnumerable<TSource> ExceptImpl<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        {
+            var hashSetFromFirstSequence = new HashSet<TSource>(second, comparer);
+
+            return first.SelectMany(element => 
+                hashSetFromFirstSequence.Add(element) ? 
+                    SelectManyEnumerable.Repeat(element, 1) : 
+                    SelectManyEnumerable.Empty<TSource>());
         }
     }
 }
